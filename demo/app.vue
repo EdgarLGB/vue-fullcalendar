@@ -3,7 +3,7 @@
   	<p>
   		Here is the demo of vue-fullcalendar, no jquery fullcalendar.js required!
   	</p>
-    <full-calendar class="test-fc" :events="fcEvents" lang="en"></full-calendar>
+    <full-calendar class="test-fc" :events="fcEvents" :holidays="fcHolidays" lang="en"></full-calendar>
   </div>
 </template>
 <script>
@@ -32,11 +32,16 @@ let demoEvents = [
     },
   ]
 
+let demoHolidays = [
+  new Date(2016, 8, 30).toDateString()
+]
+
 export default {
 	data () {
 		return {
       name:'Sunny!',
-      fcEvents : demoEvents
+      fcEvents : demoEvents,
+      fcHolidays : demoHolidays
     }
 	},
   events : {

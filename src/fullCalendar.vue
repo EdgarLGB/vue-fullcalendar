@@ -9,7 +9,7 @@
       </div>
     </fc-header>
     <!-- body display date day and events -->
-    <fc-body :current-date="currentDate" :events="events" :month-names="monthNames" :week-names="weekNames">
+    <fc-body :current-date="currentDate" :events="events" :month-names="monthNames" :week-names="weekNames" :holidays="holidays">
       <div slot="body-card">
         <slot name="fc-body-card">
         </slot>
@@ -46,6 +46,12 @@
         type : Array,
         default () {
           return langSets[this.lang].weekNames
+        }
+      },
+      holidays : {  // TODO to get the holidays from internet
+        type: Array,
+        default () {
+          return []
         }
       }
     },

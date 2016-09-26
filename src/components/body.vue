@@ -6,9 +6,12 @@
     <div class="dates" v-el:dates>
       <div calss="dates-bg">
         <div class="week-row" v-for="week in currentDates">
+        <!-- TODO -->
           <div class="day-cell" v-for="day in week"
             :class="{'today' : day.isToday,
-              'not-cur-month' : !day.isCurMonth}">
+              'not-cur-month' : !day.isCurMonth,
+              'holiday' : day.isHoliday}"
+            >
             <p class="day-number">{{day.monthDay}}</p>
           </div>
         </div>
@@ -19,7 +22,9 @@
         <div class="events-week" v-for="week in currentDates">
           <div class="events-day" v-for="day in week" track-by="$index"
             :class="{'today' : day.isToday,
-              'not-cur-month' : !day.isCurMonth}" @click.stop="dayClick(day.date, $event)">
+              'not-cur-month' : !day.isCurMonth}" 
+              v-on:click="addHoliday(day)"
+              @click.stop="dayClick(day.date, $event)">
             <p class="day-number">{{day.monthDay}}</p>
             <div class="event-box">
               <p class="event-item" v-for="event in day.events" v-show="event.cellIndex <= eventLimit"
@@ -65,6 +70,7 @@
     </div>
   </div>
 </template>
+
 <script type="text/babel">
   import dateFunc from './dateFunc'
 
@@ -73,7 +79,8 @@
       currentDate : {},
       events  : {},
       weekNames : {},
-      monthNames : {}
+      monthNames : {},
+      holidays : {}
     },
     created () {
       this.events.forEach((item, index) => {
@@ -95,6 +102,7 @@
           left : 0
         },
         selectDay : {}
+        // holidays: holidays
       }
     },
     filters : {
@@ -156,7 +164,8 @@
               isCurMonth : startDate.getMonth() == current.getMonth(),
               weekDay : perDay,
               date : new Date(startDate),
-              events : this.slotEvents(startDate)
+              events : this.slotEvents(startDate),
+              isHoliday : this.isHoliday(startDate) //TODO
             })
 
             startDate.setDate(startDate.getDate() + 1)
@@ -243,6 +252,22 @@
         jsEvent.stopPropagation()
         let pos = this.computePos(jsEvent.target)
         this.$dispatch('eventClick', event, jsEvent, pos)
+      },
+      isHoliday (date) {  //TODO
+        return this.holidays.includes(date.toDateString())
+      },
+      addHoliday (day) {
+        console.log(day)
+        if (!day.isCurMonth) {
+          return false
+        }
+        var dateStr = new Date(day.date).toDateString()
+        var index = this.holidays.indexOf(dateStr)
+        if (index > -1) {
+          this.holidays.splice(index, 1)
+        } else {
+          this.holidays.push(dateStr)
+        }
       }
     }
   }
@@ -284,6 +309,10 @@
           .day-number{
             color:rgba(0,0,0,.24);
           }
+        }
+        /*TODO*/
+        &.holiday {
+          background-color:#ff9999;
         }
       }
     }
